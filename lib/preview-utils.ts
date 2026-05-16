@@ -22,7 +22,7 @@ export function getPreviewMetadataFromPath(
     const parts = relativePath.split("/");
     const repo = parts[0];
     const repoPath = parts.slice(1).join("/");
-    const fileUrl = `https://raw.githubusercontent.com/alanagoyal/${repo}/main/${repoPath}`;
+    const fileUrl = `https://raw.githubusercontent.com/mirefnd/${repo}/main/${repoPath}`;
     return { fileUrl, fileType };
   }
 

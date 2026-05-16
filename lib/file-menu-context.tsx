@@ -8,13 +8,6 @@ interface FileMenuActions {
   onPinNote?: () => void;
   onDeleteNote?: () => void;
   noteIsPinned?: boolean;
-  // Messages actions
-  onNewChat?: () => void;
-  onPinChat?: () => void;
-  onHideAlerts?: () => void;
-  onDeleteChat?: () => void;
-  chatIsPinned?: boolean;
-  hideAlertsActive?: boolean;
 }
 
 interface FileMenuContextValue {
@@ -26,14 +19,6 @@ interface FileMenuContextValue {
   }) => void;
   unregisterNotesActions: () => void;
   updateNotesState: (state: { noteIsPinned: boolean }) => void;
-  registerMessagesActions: (actions: {
-    onNewChat: () => void;
-    onPinChat: () => void;
-    onHideAlerts: () => void;
-    onDeleteChat: () => void;
-  }) => void;
-  unregisterMessagesActions: () => void;
-  updateMessagesState: (state: { chatIsPinned: boolean; hideAlertsActive: boolean }) => void;
 }
 
 const FileMenuContext = createContext<FileMenuContextValue | null>(null);
@@ -72,41 +57,6 @@ export function FileMenuProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const registerMessagesActions = useCallback((messagesActions: {
-    onNewChat: () => void;
-    onPinChat: () => void;
-    onHideAlerts: () => void;
-    onDeleteChat: () => void;
-  }) => {
-    actionsRef.current = {
-      ...actionsRef.current,
-      onNewChat: messagesActions.onNewChat,
-      onPinChat: messagesActions.onPinChat,
-      onHideAlerts: messagesActions.onHideAlerts,
-      onDeleteChat: messagesActions.onDeleteChat,
-    };
-  }, []);
-
-  const unregisterMessagesActions = useCallback(() => {
-    actionsRef.current = {
-      ...actionsRef.current,
-      onNewChat: undefined,
-      onPinChat: undefined,
-      onHideAlerts: undefined,
-      onDeleteChat: undefined,
-      chatIsPinned: undefined,
-      hideAlertsActive: undefined,
-    };
-  }, []);
-
-  const updateMessagesState = useCallback((state: { chatIsPinned: boolean; hideAlertsActive: boolean }) => {
-    actionsRef.current = {
-      ...actionsRef.current,
-      chatIsPinned: state.chatIsPinned,
-      hideAlertsActive: state.hideAlertsActive,
-    };
-  }, []);
-
   return (
     <FileMenuContext.Provider
       value={{
@@ -114,9 +64,6 @@ export function FileMenuProvider({ children }: { children: ReactNode }) {
         registerNotesActions,
         unregisterNotesActions,
         updateNotesState,
-        registerMessagesActions,
-        unregisterMessagesActions,
-        updateMessagesState,
       }}
     >
       {children}

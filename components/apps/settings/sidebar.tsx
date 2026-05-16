@@ -59,7 +59,7 @@ const connectivityItems = [
   { id: "battery", name: "Battery", icon: <Battery className="w-5 h-5 text-white" />, iconBg: "bg-green-500", type: "static" as const },
 ];
 
-const appleAccountKeywords = ["alana", "goyal", "apple", "account", "personal", "information", "name", "birthday"];
+const appleAccountKeywords = ["amirah", "affendi", "apple", "account", "personal", "information", "name", "birthday"];
 
 export function Sidebar({
   selectedCategory,
@@ -144,13 +144,13 @@ export function Sidebar({
                   >
                     <Image
                       src="/headshot.jpg"
-                      alt="Alana Goyal"
+                      alt="Amirah Affendi"
                       width={56}
                       height={56}
                       className="rounded-full"
                     />
                     <div className="text-left flex-1">
-                      <div className="font-semibold text-lg">Alana Goyal</div>
+                      <div className="font-semibold text-lg">Amirah Affendi</div>
                       <div className="text-sm text-muted-foreground">
                         Apple Account, iCloud+, and more
                       </div>
@@ -303,13 +303,13 @@ export function Sidebar({
                   >
                     <Image
                       src="/headshot.jpg"
-                      alt="Alana Goyal"
+                      alt="Amirah Affendi"
                       width={48}
                       height={48}
                       className="rounded-full"
                     />
                     <div className="text-left">
-                      <div className="font-medium text-xs">Alana Goyal</div>
+                      <div className="font-medium text-xs">Amirah Affendi</div>
                       <div className="text-[10px] text-muted-foreground">Apple Account</div>
                     </div>
                   </button>

@@ -4,7 +4,7 @@ import { NotesDesktopPage } from "./[slug]/notes-desktop-page";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "alana goyal",
+    title: "Amirah Affendi",
     openGraph: {
       images: [`/notes/api/og/?title=${encodeURIComponent("notes")}&emoji=${encodeURIComponent("✏️")}`],
     },

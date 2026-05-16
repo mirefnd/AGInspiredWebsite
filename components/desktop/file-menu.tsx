@@ -11,12 +11,6 @@ interface FileMenuProps {
   onPinNote?: () => void;
   onDeleteNote?: () => void;
   noteIsPinned?: boolean;
-  onNewChat?: () => void;
-  onPinChat?: () => void;
-  onHideAlerts?: () => void;
-  onDeleteChat?: () => void;
-  chatIsPinned?: boolean;
-  hideAlertsActive?: boolean;
 }
 
 export function FileMenu({
@@ -27,12 +21,6 @@ export function FileMenu({
   onPinNote,
   onDeleteNote,
   noteIsPinned,
-  onNewChat,
-  onPinChat,
-  onHideAlerts,
-  onDeleteChat,
-  chatIsPinned,
-  hideAlertsActive,
 }: FileMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -41,7 +29,6 @@ export function FileMenu({
   if (!isOpen) return null;
 
   const isNotes = appId === "notes";
-  const isMessages = appId === "messages";
 
   return (
     <div
@@ -77,42 +64,6 @@ export function FileMenu({
         </>
       )}
 
-      {isMessages && (
-        <>
-          <MenuItem
-            label="New Message"
-            shortcut="N"
-            onClick={() => {
-              onNewChat?.();
-              onClose();
-            }}
-          />
-          <MenuItem
-            label={chatIsPinned ? "Unpin Conversation" : "Pin Conversation"}
-            shortcut="P"
-            onClick={() => {
-              onPinChat?.();
-              onClose();
-            }}
-          />
-          <MenuItem
-            label={hideAlertsActive ? "Show Alerts" : "Hide Alerts"}
-            shortcut="H"
-            onClick={() => {
-              onHideAlerts?.();
-              onClose();
-            }}
-          />
-          <MenuItem
-            label="Delete Conversation"
-            shortcut="D"
-            onClick={() => {
-              onDeleteChat?.();
-              onClose();
-            }}
-          />
-        </>
-      )}
     </div>
   );
 }

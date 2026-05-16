@@ -1,4 +1,7 @@
-import { InitialContact } from "@/data/messages/initial-contacts";
+export interface InitialContact {
+  name: string;
+  title?: string;
+}
 
 const CONTACTS_KEY = "user_contacts";
 
@@ -6,7 +9,7 @@ export function getUserContacts(): InitialContact[] {
   if (typeof window === "undefined") return [];
   const contacts = localStorage.getItem(CONTACTS_KEY);
   if (!contacts) return [];
-  
+
   try {
     const parsed = JSON.parse(contacts);
     if (!Array.isArray(parsed)) {
@@ -24,14 +27,13 @@ export function addUserContact(name: string): InitialContact[] {
   const contacts = getUserContacts();
   const newContact: InitialContact = {
     name,
-    title: "Custom Contact"
+    title: "Custom Contact",
   };
-  
-  // Check if contact already exists
-  if (!contacts.some(contact => contact.name.toLowerCase() === name.toLowerCase())) {
+
+  if (!contacts.some((contact) => contact.name.toLowerCase() === name.toLowerCase())) {
     contacts.push(newContact);
     localStorage.setItem(CONTACTS_KEY, JSON.stringify(contacts));
   }
-  
+
   return contacts;
 }

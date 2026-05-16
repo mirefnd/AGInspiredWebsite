@@ -15,10 +15,6 @@ import {
 const NotesApp = dynamic(() => import("@/components/apps/notes/notes-app").then((mod) => mod.NotesApp), {
   ssr: false,
 });
-const MessagesApp = dynamic(
-  () => import("@/components/apps/messages/messages-app").then((mod) => mod.MessagesApp),
-  { ssr: false }
-);
 const SettingsApp = dynamic(
   () => import("@/components/apps/settings/settings-app").then((mod) => mod.SettingsApp),
   { ssr: false }
@@ -106,7 +102,6 @@ export function MobileShell({ initialApp, initialNoteSlug, initialNote }: Mobile
             initialNote={activeNoteSlug === initialNoteSlug ? initialNote : undefined}
           />
         )}
-        {activeAppId === "messages" && <MessagesApp isMobile={true} inShell={false} />}
         {activeAppId === "settings" && <SettingsApp isMobile={true} inShell={false} />}
         {activeAppId === "iterm" && <ITermApp isMobile={true} inShell={false} />}
         {activeAppId === "finder" && (

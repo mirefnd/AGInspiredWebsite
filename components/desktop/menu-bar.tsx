@@ -27,7 +27,6 @@ interface MenuBarProps {
   onShutdown?: () => void;
   onLockScreen?: () => void;
   onLogout?: () => void;
-  onOpenMessagesConversation?: (conversationId: string) => void;
 }
 
 export function MenuBar({
@@ -39,7 +38,6 @@ export function MenuBar({
   onShutdown,
   onLockScreen,
   onLogout,
-  onOpenMessagesConversation,
 }: MenuBarProps) {
   const fileMenuActions = useFileMenuActions();
   const { getFocusedAppId, closeApp, state, setMenuOpen } = useWindowManager();
@@ -59,12 +57,13 @@ export function MenuBar({
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const weekday = now.toLocaleDateString("en-US", { weekday: "short" });
-      const month = now.toLocaleDateString("en-US", { month: "short" });
-      const day = now.getDate();
+      const weekday = now.toLocaleDateString("en-US", { weekday: "short", timeZone: "Asia/Kuala_Lumpur" });
+      const month = now.toLocaleDateString("en-US", { month: "short", timeZone: "Asia/Kuala_Lumpur" });
+      const day = now.toLocaleDateString("en-US", { day: "numeric", timeZone: "Asia/Kuala_Lumpur" });
       const time = now.toLocaleTimeString("en-US", {
         hour: "numeric",
         minute: "2-digit",
+        timeZone: "Asia/Kuala_Lumpur",
       });
       setCurrentTime(`${weekday} ${month} ${day} ${time}`);
     };
@@ -136,7 +135,7 @@ export function MenuBar({
         >
           {focusedApp?.menuBarTitle || "Finder"}
         </button>
-        {(focusedAppId === "notes" || focusedAppId === "messages") && (
+        {focusedAppId === "notes" && (
           <button
             onClick={() => toggleMenu("fileMenu")}
             className={cn(
@@ -248,18 +247,11 @@ export function MenuBar({
         onPinNote={fileMenuActions.onPinNote}
         onDeleteNote={fileMenuActions.onDeleteNote}
         noteIsPinned={fileMenuActions.noteIsPinned}
-        onNewChat={fileMenuActions.onNewChat}
-        onPinChat={fileMenuActions.onPinChat}
-        onHideAlerts={fileMenuActions.onHideAlerts}
-        onDeleteChat={fileMenuActions.onDeleteChat}
-        chatIsPinned={fileMenuActions.chatIsPinned}
-        hideAlertsActive={fileMenuActions.hideAlertsActive}
       />
 
       <NotificationCenter
         isOpen={openMenu === "notificationCenter"}
         onClose={closeMenu}
-        onOpenMessagesConversation={onOpenMessagesConversation}
       />
 
       <AboutDialog

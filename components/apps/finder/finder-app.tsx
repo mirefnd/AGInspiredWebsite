@@ -29,7 +29,7 @@ import {
 import { useRouter } from "next/navigation";
 import { FinderSearchEngine, type EntryInput } from "./search-engine";
 
-const USERNAME = HOME_DIR.split("/").pop() ?? "alanagoyal";
+const USERNAME = HOME_DIR.split("/").pop() ?? "amirah";
 
 interface FileItem {
   name: string;

@@ -11,6 +11,7 @@ export const APPS: AppConfig[] = [
     defaultSize: { width: 900, height: 600 },
     minSize: { width: 600, height: 400 },
     menuBarTitle: "Finder",
+    showOnDockByDefault: false,
     multiWindow: true,
     cascadeOffset: 30,
   },
@@ -24,17 +25,6 @@ export const APPS: AppConfig[] = [
     defaultSize: { width: 900, height: 600 },
     minSize: { width: 600, height: 400 },
     menuBarTitle: "Notes",
-  },
-  {
-    id: "messages",
-    name: "Messages",
-    icon: "/messages.png",
-    description: "Chat with AI personas",
-    accentColor: "#34C759",
-    defaultPosition: { x: 150, y: 80 },
-    defaultSize: { width: 800, height: 550 },
-    minSize: { width: 500, height: 400 },
-    menuBarTitle: "Messages",
   },
   {
     id: "photos",
@@ -57,6 +47,7 @@ export const APPS: AppConfig[] = [
     defaultSize: { width: 900, height: 650 },
     minSize: { width: 600, height: 450 },
     menuBarTitle: "Music",
+    showOnDockByDefault: false,
   },
   {
     id: "calendar",
@@ -97,6 +88,7 @@ export const APPS: AppConfig[] = [
     defaultSize: { width: 800, height: 500 },
     minSize: { width: 500, height: 300 },
     menuBarTitle: "iTerm",
+    showOnDockByDefault: false,
   },
   {
     id: "settings",

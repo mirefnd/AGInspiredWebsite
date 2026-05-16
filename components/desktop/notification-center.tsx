@@ -4,7 +4,6 @@ import { useRef, useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import {
   Calendar,
-  MessageCircle,
   ImageIcon,
   Sun,
   Cloud,
@@ -30,13 +29,11 @@ import {
 } from "@/lib/weather";
 import { cn } from "@/lib/utils";
 import type { CalendarEvent } from "@/components/apps/calendar/types";
-import type { Conversation } from "@/types/messages";
 import type { Photo } from "@/types/photos";
 
 interface NotificationCenterProps {
   isOpen: boolean;
   onClose: () => void;
-  onOpenMessagesConversation?: (conversationId: string) => void;
 }
 
 const cardClass = "bg-muted rounded-md p-3 mb-1.5";
@@ -179,98 +176,6 @@ function CalendarWidget({
             </p>
           )}
         </div>
-      )}
-    </div>
-  );
-}
-
-// --- Messages Widget ---
-function MessagesWidget({
-  onActivate,
-  refreshKey,
-  onOpenConversation,
-}: {
-  onActivate: () => void;
-  refreshKey: number;
-  onOpenConversation?: (conversationId: string) => void;
-}) {
-  const { openWindow } = useWindowManager();
-  const [totalUnread, setTotalUnread] = useState(0);
-  const [latestConversation, setLatestConversation] = useState<Conversation | null>(null);
-
-  useEffect(() => {
-    let conversations: Conversation[] = [];
-    try {
-      const stored = localStorage.getItem("dialogueConversations");
-      if (stored) conversations = JSON.parse(stored);
-    } catch {
-      // ignore
-    }
-
-    const total = conversations.reduce(
-      (sum, c) => sum + (c.unreadCount || 0),
-      0
-    );
-
-    const unreadConversations = conversations
-      .filter((c) => (c.unreadCount || 0) > 0)
-      .sort(
-        (a, b) =>
-          new Date(b.lastMessageTime).getTime() -
-          new Date(a.lastMessageTime).getTime()
-      );
-    setTotalUnread(total);
-    setLatestConversation(unreadConversations[0] || null);
-  }, [refreshKey]);
-
-  const senderName = latestConversation?.recipients[0]?.name;
-  const lastMessage =
-    latestConversation?.messages[latestConversation.messages.length - 1];
-  const initials = senderName
-    ? senderName
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-    : "";
-
-  return (
-    <div
-      className={clickableCardClass}
-      onClick={() => {
-        if (latestConversation?.id && onOpenConversation) {
-          onOpenConversation(latestConversation.id);
-        } else {
-          openWindow("messages");
-        }
-        onActivate();
-      }}
-    >
-      <div className="flex items-center gap-1.5 mb-2">
-        <MessageCircle className="w-3.5 h-3.5 text-muted-foreground" />
-        <span className="text-xs font-semibold flex-1">Messages</span>
-        {totalUnread > 0 && (
-          <span className="bg-[#0A7CFF] text-white text-[10px] font-medium rounded-full px-1.5 py-0.5 min-w-[18px] text-center">
-            {totalUnread}
-          </span>
-        )}
-      </div>
-      {latestConversation && senderName && lastMessage ? (
-        <div className="flex items-start gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-b from-zinc-300 to-zinc-400 dark:from-zinc-500 dark:to-zinc-700 flex items-center justify-center shrink-0">
-            <span className="text-[10px] font-semibold text-white">
-              {initials}
-            </span>
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-medium truncate">{senderName}</p>
-            <p className="text-[10px] text-muted-foreground line-clamp-2">
-              {lastMessage.content}
-            </p>
-          </div>
-        </div>
-      ) : (
-        <p className="text-xs text-muted-foreground">No new messages</p>
       )}
     </div>
   );
@@ -432,7 +337,6 @@ function WeatherWidget({
 export function NotificationCenter({
   isOpen,
   onClose,
-  onOpenMessagesConversation,
 }: NotificationCenterProps) {
   const menuRef = useRef<HTMLDivElement>(null);
   useClickOutside(menuRef, onClose, isOpen);
@@ -507,11 +411,6 @@ export function NotificationCenter({
           <p className="text-2xl font-bold">{monthDay}</p>
         </div>
         <CalendarWidget onActivate={onClose} refreshKey={openRefreshKey} />
-        <MessagesWidget
-          onActivate={onClose}
-          refreshKey={openRefreshKey}
-          onOpenConversation={onOpenMessagesConversation}
-        />
         <PhotosWidget photos={photos} loading={photosLoading} onActivate={onClose} />
         <WeatherWidget weather={weather} loading={weatherLoading} onActivate={onClose} />
       </ScrollArea>

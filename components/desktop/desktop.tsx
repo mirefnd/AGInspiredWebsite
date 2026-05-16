@@ -12,7 +12,6 @@ import { Dock } from "./dock";
 import { Window } from "./window";
 import { MessagesNotificationBanner } from "./messages-notification-banner";
 import { NotesApp } from "@/components/apps/notes/notes-app";
-import { MessagesApp } from "@/components/apps/messages/messages-app";
 import type { PreviewFileType } from "@/components/apps/preview";
 import { getPreviewMetadataFromPath, PREVIEW_TITLE_BAR_HEIGHT } from "@/lib/preview-utils";
 import {
@@ -30,13 +29,11 @@ import { RestartOverlay } from "./restart-overlay";
 import { getWallpaperPath } from "@/lib/os-versions";
 import type { SettingsPanel, SettingsCategory } from "@/components/apps/settings/settings-app";
 import { getTextEditContent, saveTextEditContent, cacheTextEditContent } from "@/lib/file-storage";
-import { loadNotesSelectedSlug, saveMessagesConversation } from "@/lib/sidebar-persistence";
+import { loadNotesSelectedSlug } from "@/lib/sidebar-persistence";
 import { getNotesSelectedSlugMemory } from "@/lib/notes/selection-state";
 import { setUrl } from "@/lib/set-url";
 import { getShellUrlForApp } from "@/lib/shell-routing";
 import { fetchGitHubFileContent } from "@/lib/github-client";
-import type { MessagesNotificationPayload } from "@/types/messages/notification";
-import type { MessagesConversationSelectRequest } from "@/types/messages/selection";
 import { getAppById } from "@/lib/app-config";
 
 const SettingsApp = dynamic(() => import("@/components/apps/settings/settings-app").then(m => ({ default: m.SettingsApp })));
@@ -193,7 +190,7 @@ function DesktopContent({
     updateWindowMetadata,
     getWindowsByApp,
   } = useWindowManager();
-  const { focusMode, currentOS } = useSystemSettings();
+  const { currentOS } = useSystemSettings();
   const { touchRecent } = useRecents();
 
   // Debounce touchRecent to avoid excessive re-renders
@@ -221,12 +218,7 @@ function DesktopContent({
   const [documentAppRouteProcessed, setDocumentAppRouteProcessed] = useState(
     !(initialDocumentRouteAppId && !(initialDocumentRouteAppId === "textedit" ? initialTextEditFile : initialPreviewFile))
   );
-  const [appBadges, setAppBadges] = useState<Record<string, number>>({});
-  const [activeNotification, setActiveNotification] = useState<MessagesNotificationPayload | null>(null);
-  const [isNotificationHovered, setIsNotificationHovered] = useState(false);
-  const [messagesSelectRequest, setMessagesSelectRequest] = useState<MessagesConversationSelectRequest | null>(null);
-  const nextMessagesSelectRequestIdRef = useRef(1);
-  const notificationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [appBadges] = useState<Record<string, number>>({});
   const getNotesSlugForRouting = useCallback(
     () => getNotesSelectedSlugMemory() ?? loadNotesSelectedSlug() ?? undefined,
     []
@@ -629,88 +621,6 @@ function DesktopContent({
     }
   }, [restoreDefaultOnUnlock, restoreDesktopDefault, getNotesSlugForRouting]);
 
-  const handleMessagesUnreadBadgeChange = useCallback((count: number) => {
-    const safeCount = Math.max(0, Math.floor(count));
-    setAppBadges((prev) => {
-      if ((prev.messages ?? 0) === safeCount) return prev;
-      return { ...prev, messages: safeCount };
-    });
-  }, []);
-
-  const handleMessagesNotification = useCallback((notification: MessagesNotificationPayload) => {
-    setActiveNotification(notification);
-  }, []);
-
-  const handleNotificationDismiss = useCallback(() => {
-    setActiveNotification(null);
-    setIsNotificationHovered(false);
-  }, []);
-
-  useEffect(() => {
-    if (notificationTimeoutRef.current) {
-      clearTimeout(notificationTimeoutRef.current);
-      notificationTimeoutRef.current = null;
-    }
-    if (!activeNotification) return;
-    if (isNotificationHovered) return;
-    notificationTimeoutRef.current = setTimeout(() => {
-      setActiveNotification(null);
-      notificationTimeoutRef.current = null;
-    }, 3000);
-  }, [activeNotification, isNotificationHovered]);
-
-  useEffect(() => {
-    return () => {
-      if (notificationTimeoutRef.current) {
-        clearTimeout(notificationTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  const handleNotificationClick = useCallback((notification: MessagesNotificationPayload) => {
-    const { conversationId } = notification;
-    saveMessagesConversation(conversationId);
-    const requestId = nextMessagesSelectRequestIdRef.current++;
-    setMessagesSelectRequest({ conversationId, requestId });
-    setActiveNotification(null);
-    setIsNotificationHovered(false);
-
-    const messagesWindow = getWindow("messages");
-    if (messagesWindow?.isOpen) {
-      if (messagesWindow.isMinimized) {
-        restoreWindow("messages");
-      } else {
-        focusWindow("messages");
-      }
-      return;
-    }
-    openWindow("messages");
-  }, [getWindow, restoreWindow, focusWindow, openWindow]);
-
-  const handleOpenMessagesConversation = useCallback((conversationId: string) => {
-    saveMessagesConversation(conversationId);
-    const requestId = nextMessagesSelectRequestIdRef.current++;
-    setMessagesSelectRequest({ conversationId, requestId });
-
-    const messagesWindow = getWindow("messages");
-    if (messagesWindow?.isOpen) {
-      if (messagesWindow.isMinimized) {
-        restoreWindow("messages");
-      } else {
-        focusWindow("messages");
-      }
-      return;
-    }
-    openWindow("messages");
-  }, [getWindow, restoreWindow, focusWindow, openWindow]);
-
-  const handleMessagesSelectRequestHandled = useCallback((requestId: number) => {
-    setMessagesSelectRequest((prev) => {
-      if (!prev || prev.requestId !== requestId) return prev;
-      return null;
-    });
-  }, []);
-
   return (
     <div className="fixed inset-0" data-shell="desktop">
       <Image
@@ -730,24 +640,12 @@ function DesktopContent({
         onShutdown={handleShutdown}
         onLockScreen={handleLockScreen}
         onLogout={handleLogout}
-        onOpenMessagesConversation={handleOpenMessagesConversation}
       />
 
       {isActive && (
         <>
           <Window appId="notes">
             <NotesApp inShell={true} initialSlug={initialNoteSlug} />
-          </Window>
-
-          <Window appId="messages" keepMountedWhenMinimized={true}>
-            <MessagesApp
-              inShell={true}
-              focusModeActive={focusMode !== "off"}
-              onUnreadBadgeCountChange={handleMessagesUnreadBadgeChange}
-              onNotification={handleMessagesNotification}
-              externalSelectConversationRequest={messagesSelectRequest}
-              onExternalSelectRequestHandled={handleMessagesSelectRequestHandled}
-            />
           </Window>
 
           <Window appId="settings">
@@ -876,12 +774,7 @@ function DesktopContent({
             onFinderClick={handleFinderDockClick}
             appBadges={appBadges}
           />
-          <MessagesNotificationBanner
-            notification={activeNotification}
-            onClick={handleNotificationClick}
-            onDismiss={handleNotificationDismiss}
-            onHoverChange={setIsNotificationHovered}
-          />
+          <MessagesNotificationBanner />
         </>
       )}
 

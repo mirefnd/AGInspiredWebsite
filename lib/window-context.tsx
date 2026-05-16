@@ -75,7 +75,6 @@ function getDefaultWindowState(appId: string): WindowState {
 // Windows listed in z-index order (first = back, last = front)
 const DESKTOP_DEFAULT_CONFIG = {
   windows: [
-    { appId: "messages", position: { x: 500, y: 60 } },
     { appId: "notes", position: { x: 150, y: 40 }, size: { width: 1000, height: 700 } },
   ],
   focusedAppId: "notes",

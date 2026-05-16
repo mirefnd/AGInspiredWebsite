@@ -6,7 +6,6 @@ export const SHELL_NOTES_ROOT_PATH = "/notes";
 
 const APP_ROUTE_SEGMENTS = {
   settings: "settings",
-  messages: "messages",
   notes: "notes",
   iterm: "iterm",
   finder: "finder",

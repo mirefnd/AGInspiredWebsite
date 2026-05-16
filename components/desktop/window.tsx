@@ -54,7 +54,7 @@ export function Window({
   const innerWrapperRef = useRef<HTMLDivElement>(null);
 
   const isFocused = state.focusedWindowId === windowState?.id;
-  const usesTransformPositioning = appId !== "messages";
+  const usesTransformPositioning = true;
   const isBorderlessWindow = appId === "weather";
 
   // Track if window was focused before current interaction
