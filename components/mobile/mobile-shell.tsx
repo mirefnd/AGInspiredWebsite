@@ -29,6 +29,9 @@ const FinderApp = dynamic(
 const PhotosApp = dynamic(() => import("@/components/apps/photos/photos-app").then((mod) => mod.PhotosApp), {
   ssr: false,
 });
+const MailApp = dynamic(() => import("@/components/apps/mail/mail-app").then((mod) => mod.MailApp), {
+  ssr: false,
+});
 const CalendarApp = dynamic(
   () => import("@/components/apps/calendar/calendar-app").then((mod) => mod.CalendarApp),
   { ssr: false }
@@ -108,6 +111,7 @@ export function MobileShell({ initialApp, initialNoteSlug, initialNote }: Mobile
           <FinderApp isMobile={true} inShell={false} onOpenApp={handleOpenAppFromFinder} />
         )}
         {activeAppId === "photos" && <PhotosApp isMobile={true} inShell={false} />}
+        {activeAppId === "mail" && <MailApp isMobile={true} inShell={false} />}
         {activeAppId === "calendar" && <CalendarApp isMobile={true} inShell={false} />}
         {activeAppId === "weather" && <WeatherApp isMobile={true} inShell={false} />}
         {activeAppId === "music" && <MusicApp isMobile={true} />}

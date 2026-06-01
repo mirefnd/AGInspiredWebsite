@@ -688,6 +688,9 @@ export function clearAppState(appId: string): void {
     case "iterm":
       clearItermStorage();
       break;
+    case "mail":
+      // Mail compose state is pure React state — nothing to clear from storage
+      break;
   }
 }
 

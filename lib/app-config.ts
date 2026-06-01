@@ -38,6 +38,17 @@ export const APPS: AppConfig[] = [
     menuBarTitle: "Photos",
   },
   {
+    id: "mail",
+    name: "Mail",
+    icon: "/mail.png",
+    description: "Compose and send email",
+    accentColor: "#0A7CFF",
+    defaultPosition: { x: 150, y: 65 },
+    defaultSize: { width: 700, height: 520 },
+    minSize: { width: 480, height: 360 },
+    menuBarTitle: "Mail",
+  },
+  {
     id: "music",
     name: "Music",
     icon: "/music.png",

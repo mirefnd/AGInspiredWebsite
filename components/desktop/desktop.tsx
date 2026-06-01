@@ -40,6 +40,7 @@ const SettingsApp = dynamic(() => import("@/components/apps/settings/settings-ap
 const ITermApp = dynamic(() => import("@/components/apps/iterm/iterm-app").then(m => ({ default: m.ITermApp })));
 const FinderApp = dynamic(() => import("@/components/apps/finder/finder-app").then(m => ({ default: m.FinderApp })));
 const PhotosApp = dynamic(() => import("@/components/apps/photos/photos-app").then(m => ({ default: m.PhotosApp })));
+const MailApp = dynamic(() => import("@/components/apps/mail/mail-app").then(m => ({ default: m.MailApp })));
 const CalendarApp = dynamic(() => import("@/components/apps/calendar/calendar-app").then(m => ({ default: m.CalendarApp })));
 const WeatherApp = dynamic(() => import("@/components/apps/weather/weather-app").then(m => ({ default: m.WeatherApp })));
 const MusicApp = dynamic(() => import("@/components/apps/music/music-app").then(m => ({ default: m.MusicApp })));
@@ -658,6 +659,10 @@ function DesktopContent({
 
           <Window appId="photos">
             <PhotosApp inShell={true} />
+          </Window>
+
+          <Window appId="mail">
+            <MailApp inShell={true} />
           </Window>
 
           <Window appId="calendar">

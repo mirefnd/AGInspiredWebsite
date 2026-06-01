@@ -6,6 +6,7 @@ import { APPS, getAppById } from "@/lib/app-config";
 import { useWindowManager } from "@/lib/window-context";
 import { cn } from "@/lib/utils";
 import { CalendarDockIcon } from "@/components/apps/calendar/calendar-dock-icon";
+import { MailDockIcon } from "@/components/apps/mail/mail-dock-icon";
 
 interface DockProps {
   onTrashClick?: () => void;
@@ -501,6 +502,8 @@ export function Dock({
               >
                 {app.id === "calendar" ? (
                   <CalendarDockIcon size={Math.round(metrics.icon * 0.79)} />
+                ) : app.id === "mail" ? (
+                  <MailDockIcon size={Math.round(metrics.icon * 0.79)} />
                 ) : (
                   <Image
                     src={app.icon}
