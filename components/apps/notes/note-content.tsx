@@ -14,6 +14,7 @@ import {
   insertImageMarkdown,
 } from "@/lib/notes/image-upload";
 import { cn } from "@/lib/utils";
+import { useOptionalWindowManager } from "@/lib/window-context";
 
 const SPACE_TAB = "  ";
 const NBSP_TAB = "\u00a0\u00a0";
@@ -64,6 +65,7 @@ export default function NoteContent({
   isEditing: boolean;
   setIsEditing: (editing: boolean) => void;
 }) {
+  const windowManager = useOptionalWindowManager();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const clickRelativeYRef = useRef<number | null>(null);
   const dragDepthRef = useRef(0);
@@ -404,6 +406,25 @@ export default function NoteContent({
   const renderLink = useCallback((props: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
     const href = props.href || "";
     const isExternal = /^https?:\/\//i.test(href);
+    const isAppLink = /^app:\/\//i.test(href);
+
+    if (isAppLink) {
+      const appId = href.replace(/^app:\/\//i, "");
+      return (
+        <button
+          type="button"
+          className="underline text-[color:inherit] cursor-pointer bg-transparent border-none p-0 font-[inherit] text-[length:inherit]"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            windowManager?.openWindow(appId);
+          }}
+        >
+          {props.children}
+        </button>
+      );
+    }
+
     return (
       <a
         {...props}
@@ -414,7 +435,7 @@ export default function NoteContent({
         {props.children}
       </a>
     );
-  }, [stopPropagation]);
+  }, [stopPropagation, windowManager]);
 
   const renderImage = useCallback((props: React.ImgHTMLAttributes<HTMLImageElement>) => {
     const src = typeof props.src === "string" ? props.src : "";
@@ -462,6 +483,7 @@ export default function NoteContent({
           <ReactMarkdown
             className="markdown-body"
             remarkPlugins={[remarkGfm]}
+            urlTransform={(url) => url}
             components={{
               li: renderListItem,
               a: renderLink,

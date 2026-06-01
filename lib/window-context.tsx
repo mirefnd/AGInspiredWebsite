@@ -1210,3 +1210,7 @@ export function useWindowManager(): WindowManagerContextValue {
   }
   return context;
 }
+
+export function useOptionalWindowManager(): WindowManagerContextValue | null {
+  return useContext(WindowManagerContext);
+}
