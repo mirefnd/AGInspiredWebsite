@@ -11,7 +11,7 @@ function getServiceClient() {
 }
 
 // Available collections for categorization
-const COLLECTIONS = ["flowers", "food", "friends"] as const;
+const COLLECTIONS = ["places", "faces"] as const;
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10MB decoded
 const MAX_FILENAME_LENGTH = 255;
 const COLLECTION_SET = new Set<string>(COLLECTIONS);
@@ -101,10 +101,10 @@ async function categorizeImage(base64Image: string): Promise<string[]> {
           content: [
             {
               type: "text",
-              text: `Analyze this image and determine which single category best describes it. The available categories are: flowers, food, friends (photos of people/social gatherings).
+              text: `Analyze this image and determine which single category best describes it. The available categories are: places (landscapes, travel, architecture, locations), faces (portraits, people, social gatherings).
 
 Choose ONLY ONE category - the one that best fits the primary subject of the image.
-Return ONLY the category name as a string, e.g. "flowers" or "food" or "friends".
+Return ONLY the category name as a string, e.g. "places" or "faces".
 If no categories match, return "none".
 Do not include any other text, just the category name.`,
             },
@@ -195,7 +195,7 @@ export async function POST(request: NextRequest) {
 
     if (collections === null) {
       return NextResponse.json(
-        { error: "collections must be an array of: flowers, food, friends" },
+        { error: "collections must be an array of: places, faces" },
         { status: 400 }
       );
     }

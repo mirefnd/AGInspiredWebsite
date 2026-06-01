@@ -30,9 +30,8 @@ interface PhotoRow {
 
 // Static collections (these don't change often)
 const COLLECTIONS: Collection[] = [
-  { id: "flowers", name: "Flowers", coverPhotoId: "IMG_6282" },
-  { id: "food", name: "Food", coverPhotoId: "IMG_7430" },
-  { id: "friends", name: "Friends", coverPhotoId: "IMG_6537" },
+  { id: "places", name: "Places", coverPhotoId: "" },
+  { id: "faces", name: "Faces", coverPhotoId: "" },
 ];
 
 // Load favorites from localStorage

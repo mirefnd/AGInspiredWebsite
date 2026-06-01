@@ -167,7 +167,6 @@ export function PhotoViewer({
             className="object-contain"
             sizes="(max-width: 768px) 100vw, 80vw"
             priority
-            unoptimized
           />
         </div>
       </div>

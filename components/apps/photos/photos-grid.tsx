@@ -230,7 +230,6 @@ export function PhotosGrid({
                           fill
                           className="object-cover"
                           sizes="(max-width: 768px) 33vw, 16vw"
-                          unoptimized
                         />
                         {/* Favorite heart button */}
                         <div
