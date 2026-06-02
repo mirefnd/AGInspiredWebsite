@@ -1,19 +1,58 @@
 /**
- * Uploads all photos from ~/Desktop/Faces/ to Supabase,
- * tagging each with collections: ["faces"].
+ * Uploads all photos from ~/Desktop/Places/ to Supabase,
+ * tagging each with collections: ["places"].
  *
- * Usage: node scripts/upload-faces.mjs
+ * Reads NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY from
+ * .env.local (or the process env). Never commit secrets to this file.
+ *
+ * Usage:
+ *   node --env-file=.env.local scripts/upload-faces.mjs
+ *   # or, if env vars are already exported:
+ *   node scripts/upload-faces.mjs
  */
 
 import { createClient } from "@supabase/supabase-js";
 import { readdir, readFile, stat } from "fs/promises";
-import { join, extname, basename } from "path";
+import { readFileSync, existsSync } from "fs";
+import { join, extname, basename, dirname } from "path";
+import { fileURLToPath } from "url";
 import exifr from "exifr";
 import os from "os";
 
-const SUPABASE_URL = "https://vhgcnbwtyteuuwznvhnw.supabase.co";
-const SERVICE_ROLE_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZoZ2NuYnd0eXRldXV3em52aG53Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODkwOTc1MCwiZXhwIjoyMDk0NDg1NzUwfQ.X6-FQN02g9DaBYYeVitSSR1W9b7C6jleZoSBwA2BXQM";
+// Best-effort .env.local loader so the script works without --env-file too.
+function loadEnvLocal() {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const envPath = join(__dirname, "..", ".env.local");
+  if (!existsSync(envPath)) return;
+  const contents = readFileSync(envPath, "utf8");
+  for (const rawLine of contents.split("\n")) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) continue;
+    const eq = line.indexOf("=");
+    if (eq === -1) continue;
+    const key = line.slice(0, eq).trim();
+    let value = line.slice(eq + 1).trim();
+    if (
+      (value.startsWith('"') && value.endsWith('"')) ||
+      (value.startsWith("'") && value.endsWith("'"))
+    ) {
+      value = value.slice(1, -1);
+    }
+    if (process.env[key] === undefined) process.env[key] = value;
+  }
+}
+loadEnvLocal();
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
+  console.error(
+    "Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY.\n" +
+      "Set them in .env.local or export them in your shell before running."
+  );
+  process.exit(1);
+}
 
 const FACES_FOLDER = join(os.homedir(), "Desktop", "Places");
 const ALLOWED_EXTENSIONS = new Set([".jpg", ".jpeg", ".png", ".webp", ".JPG", ".JPEG", ".PNG", ".WEBP"]);
